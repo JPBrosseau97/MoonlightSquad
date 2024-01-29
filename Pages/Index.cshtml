@@ -1,0 +1,47 @@
+﻿@page
+@model IndexModel
+@{
+    ViewData["Title"] = "Moonlight Squad";
+}
+
+<style>
+    .carousel-item{
+        height:25rem;
+        
+        background-position:center;
+        background-size:cover;
+    }
+
+    .headline-container {
+        padding:1rem;
+        background-color: #183e6f;
+    }
+
+    
+</style>
+
+<div id="carousel-headlines" class="carousel slide" data-bs-ride="carousel">
+<div class="carousel-inner">
+
+    <ol class="carousel-indicators">
+        <li data-bs-target="#carousel-headlines" data-bs-slide-to="0" class="active"></li>
+            <li data-bs-target="#carousel-headlines" data-bs-slide-to="1"></li>
+    </ol>
+        <div class="carousel-item active" style="background-image:url(https://www.fdli.org/wp-content/uploads/2018/11/Unstacking-Class-Action-Janssen-800x450.jpg)">
+        <div class="headline-container">
+            <h1>Compte-rendu de partie: ASA 17 Novembre</h1>
+            <p>Lisez le compte rendu de Sunlight sur la dernière partie de l'équipe!</p>
+
+        </div>
+    </div>
+        <div class="carousel-item" style="background-image:url(https://scontent.xx.fbcdn.net/v/t1.15752-9/420101728_3523128241286197_9166121485251008974_n.jpg?_nc_cat=108&ccb=1-7&_nc_sid=510075&_nc_ohc=ZfbYI1FmCksAX-6COSD&_nc_ad=z-m&_nc_cid=0&_nc_ht=scontent.xx&oh=03_AdSXDPyAL2-jPAen7MnYik8Mg-SRsCeMJhAqWXREWbxWcQ&oe=65DFAD69)">
+        <div class="headline-container">
+            <h1>"Nyet, rifle is fine."</h1>
+            <p></p>
+
+        </div>
+    </div>
+</div>
+</div>
+
+       
