@@ -27,6 +27,26 @@
                             <a class="nav-link text-light" asp-area="" asp-page="/Privacy">Privacy</a>
                         </li>
                     </ul>
+                    <ul class="navbar-nav">
+                        @if (User.Identity?.IsAuthenticated == true)
+                        {
+                            <li class="nav-item">
+                                <span class="nav-link text-light">@User.Identity.Name</span>
+                            </li>
+                            <li class="nav-item">
+                                <a class="nav-link text-light" asp-page="/Logout">Déconnexion</a>
+                            </li>
+                        }
+                        else
+                        {
+                            <li class="nav-item">
+                                <a class="nav-link text-light" asp-page="/Login">Connexion</a>
+                            </li>
+                            <li class="nav-item">
+                                <a class="nav-link text-light" asp-page="/Register">Inscription</a>
+                            </li>
+                        }
+                    </ul>
                 </div>
             </div>
         </nav>

@@ -1,48 +1,58 @@
+using Microsoft.AspNetCore.Authentication;
+using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
-using System.Security.Claims;
-using Microsoft.AspNetCore.Authentication.Cookies;
-using Microsoft.AspNetCore.Authentication;
+using MoonlightSquad.Class.BLL;
 using System.ComponentModel.DataAnnotations;
+using System.Security.Claims;
 
 namespace MoonlightSquad.Pages.Pages;
 
 public class LoginModel : PageModel
 {
-    public void OnGet()
+    private readonly UserService _userService;
+
+    public LoginModel(UserService userService)
     {
-        
+        _userService = userService;
     }
-[Required]
-public string Username { get; set; } =string.Empty;
-[Required]
-public string Password { get; set; }= string.Empty;
-    public IActionResult OnPost(string username, string password)
+
+    [BindProperty]
+    [Required(ErrorMessage = "Le nom d'utilisateur est requis.")]
+    public string Username { get; set; } = string.Empty;
+
+    [BindProperty]
+    [Required(ErrorMessage = "Le mot de passe est requis.")]
+    public string Password { get; set; } = string.Empty;
+
+    public void OnGet() { }
+
+    public async Task<IActionResult> OnPostAsync()
     {
-        // Ici, vous devriez vérifier les informations d'identification de l'utilisateur
-        // Par exemple, en les comparant à une base de données ou à une liste d'utilisateurs
+        if (!ModelState.IsValid)
+            return Page();
 
-        if (username == "admin" && password == "password") // Remplacez par votre logique d'authentification
+        var user = await _userService.ValidateAsync(Username, Password);
+        if (user == null)
         {
-            // Si les informations d'identification sont correctes, connectez l'utilisateur
-            var claims = new List<Claim>
-            {
-                new Claim(ClaimTypes.Name, username)
-            };
-
-            var claimsIdentity = new ClaimsIdentity(claims, CookieAuthenticationDefaults.AuthenticationScheme);
-            var authProperties = new AuthenticationProperties
-            {
-                IsPersistent = true // Permet de garder l'utilisateur connecté après la fermeture du navigateur
-            };
-
-            HttpContext.SignInAsync(CookieAuthenticationDefaults.AuthenticationScheme, new ClaimsPrincipal(claimsIdentity), authProperties);
-
-            return RedirectToPage("/Index"); // Redirige vers la page d'accueil après la connexion
+            ModelState.AddModelError(string.Empty, "Nom d'utilisateur ou mot de passe incorrect.");
+            return Page();
         }
 
-        // Si les informations d'identification sont incorrectes, affichez un message d'erreur ou redirigez vers la page de connexion
-        ModelState.AddModelError(string.Empty, "Nom d'utilisateur ou mot de passe incorrect.");
-        return Page();
+        var claims = new List<Claim>
+        {
+            new Claim(ClaimTypes.Name, user.Username),
+            new Claim(ClaimTypes.Role, user.Role)
+        };
+
+        var identity = new ClaimsIdentity(claims, CookieAuthenticationDefaults.AuthenticationScheme);
+        var properties = new AuthenticationProperties { IsPersistent = true };
+
+        await HttpContext.SignInAsync(
+            CookieAuthenticationDefaults.AuthenticationScheme,
+            new ClaimsPrincipal(identity),
+            properties);
+
+        return RedirectToPage("/Index");
     }
 }

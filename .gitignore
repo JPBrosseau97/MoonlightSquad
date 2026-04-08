@@ -1,0 +1,22 @@
+## Build output
+bin/
+obj/
+
+## Base de données SQLite locale
+*.db
+*.db-shm
+*.db-wal
+
+## Secrets et config locale
+appsettings.Local.json
+*.user
+
+## OS
+.DS_Store
+Thumbs.db
+
+## IDE
+.vs/
+.vscode/
+*.suo
+*.user

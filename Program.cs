@@ -1,4 +1,8 @@
 using Microsoft.AspNetCore.Authentication.Cookies;
+using Microsoft.EntityFrameworkCore;
+using MoonlightSquad.Class.BLL;
+using MoonlightSquad.Class.DAL;
+
 var builder = WebApplication.CreateBuilder(args);
 
 //=====================================
@@ -6,30 +10,46 @@ var builder = WebApplication.CreateBuilder(args);
 //=====================================
 builder.Services.AddRazorPages();
 
-// Ajoute le système de cookies
+// Base de données SQLite
+builder.Services.AddDbContext<AppDbContext>(options =>
+    options.UseSqlite("Data Source=moonlightsquad.db"));
+
+// Service utilisateurs
+builder.Services.AddScoped<UserService>();
+
+// Authentification par cookie
 builder.Services.AddAuthentication(CookieAuthenticationDefaults.AuthenticationScheme)
     .AddCookie(options =>
     {
         options.LoginPath = "/Login";
+        options.LogoutPath = "/Logout";
+        options.ExpireTimeSpan = TimeSpan.FromHours(8);
     });
 
 var app = builder.Build();
 
+// Initialisation de la base de données au démarrage
+using (var scope = app.Services.CreateScope())
+{
+    var db = scope.ServiceProvider.GetRequiredService<AppDbContext>();
+    db.Database.EnsureCreated();
+    var userService = scope.ServiceProvider.GetRequiredService<UserService>();
+    await userService.SeedAdminAsync();
+}
 
 // Configure the HTTP request pipeline.
 if (!app.Environment.IsDevelopment())
 {
     app.UseExceptionHandler("/Error");
-    // The default HSTS value is 30 days. You may want to change this for production scenarios, see https://aka.ms/aspnetcore-hsts.
     app.UseHsts();
 }
-
 
 app.UseHttpsRedirection();
 app.UseStaticFiles();
 
 app.UseRouting();
 
+app.UseAuthentication();
 app.UseAuthorization();
 
 app.MapRazorPages();
