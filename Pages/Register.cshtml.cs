@@ -29,6 +29,13 @@ public class RegisterModel : PageModel
     [Compare(nameof(Password), ErrorMessage = "Les mots de passe ne correspondent pas.")]
     public string ConfirmPassword { get; set; } = string.Empty;
 
+    [BindProperty]
+    public IFormFile? ProfilePictureFile { get; set; }
+
+    [BindProperty]
+    [StringLength(500, ErrorMessage = "Maximum 500 caractères.")]
+    public string? AboutMe { get; set; }
+
     public void OnGet() { }
 
     public async Task<IActionResult> OnPostAsync()
@@ -36,7 +43,22 @@ public class RegisterModel : PageModel
         if (!ModelState.IsValid)
             return Page();
 
-        var success = await _userService.RegisterAsync(Username, Password);
+        string? profilePictureDataUrl = null;
+        if (ProfilePictureFile != null)
+        {
+            if (ProfilePictureFile.Length > 2 * 1024 * 1024)
+            {
+                ModelState.AddModelError(nameof(ProfilePictureFile), "L'image ne doit pas dépasser 2 Mo.");
+                return Page();
+            }
+
+            using var ms = new MemoryStream();
+            await ProfilePictureFile.CopyToAsync(ms);
+            var base64 = Convert.ToBase64String(ms.ToArray());
+            profilePictureDataUrl = $"data:{ProfilePictureFile.ContentType};base64,{base64}";
+        }
+
+        var success = await _userService.RegisterAsync(Username, Password, profilePictureDataUrl, AboutMe);
         if (!success)
         {
             ModelState.AddModelError(nameof(Username), "Ce nom d'utilisateur est déjà pris.");

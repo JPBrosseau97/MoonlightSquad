@@ -5,14 +5,14 @@
 }
 
 <div class="row justify-content-center mt-5">
-    <div class="col-md-4">
+    <div class="col-md-5">
         <div class="card shadow">
             <div class="card-body p-4">
                 <h2 class="card-title text-center mb-4">Inscription</h2>
 
                 <div asp-validation-summary="All" class="alert alert-danger" role="alert"></div>
 
-                <form method="post">
+                <form method="post" enctype="multipart/form-data">
                     <div class="mb-3">
                         <label asp-for="Username" class="form-label">Nom d'utilisateur</label>
                         <input asp-for="Username" class="form-control" autocomplete="username" />
@@ -27,6 +27,16 @@
                         <label asp-for="ConfirmPassword" class="form-label">Confirmer le mot de passe</label>
                         <input asp-for="ConfirmPassword" type="password" class="form-control" autocomplete="new-password" />
                         <span asp-validation-for="ConfirmPassword" class="text-danger small"></span>
+                    </div>
+                    <div class="mb-3">
+                        <label asp-for="ProfilePictureFile" class="form-label">Photo de profil <span class="text-muted">(optionnel, max 2 Mo)</span></label>
+                        <input asp-for="ProfilePictureFile" type="file" class="form-control" accept="image/*" />
+                        <span asp-validation-for="ProfilePictureFile" class="text-danger small"></span>
+                    </div>
+                    <div class="mb-3">
+                        <label asp-for="AboutMe" class="form-label">À propos <span class="text-muted">(optionnel)</span></label>
+                        <textarea asp-for="AboutMe" class="form-control" rows="3" placeholder="Parle-nous un peu de toi..."></textarea>
+                        <span asp-validation-for="AboutMe" class="text-danger small"></span>
                     </div>
                     <div class="d-grid">
                         <button type="submit" class="btn btn-success">Créer un compte</button>

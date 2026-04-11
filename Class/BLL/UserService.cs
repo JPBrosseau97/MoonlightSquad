@@ -21,6 +21,42 @@ public class UserService
         return VerifyPassword(password, user.PasswordHash) ? user : null;
     }
 
+    public async Task<User?> GetByUsernameAsync(string username)
+        => await _db.Users.FirstOrDefaultAsync(u => u.Username == username);
+
+    /// <summary>
+    /// Crée un nouveau compte. Retourne false si le username est déjà pris.
+    /// </summary>
+    public async Task<bool> RegisterAsync(string username, string password,
+        string? profilePicture = null, string? aboutMe = null)
+    {
+        if (await _db.Users.AnyAsync(u => u.Username == username))
+            return false;
+
+        _db.Users.Add(new User
+        {
+            Username = username,
+            PasswordHash = HashPassword(password),
+            Role = "Member",
+            ProfilePicture = profilePicture,
+            AboutMe = aboutMe
+        });
+        await _db.SaveChangesAsync();
+        return true;
+    }
+
+    public async Task UpdateProfileAsync(string username, string? aboutMe, string? profilePicture)
+    {
+        var user = await _db.Users.FirstOrDefaultAsync(u => u.Username == username);
+        if (user == null) return;
+
+        user.AboutMe = aboutMe;
+        if (profilePicture != null)
+            user.ProfilePicture = profilePicture;
+
+        await _db.SaveChangesAsync();
+    }
+
     public string HashPassword(string password)
     {
         byte[] salt = RandomNumberGenerator.GetBytes(16);
@@ -36,24 +72,6 @@ public class UserService
         byte[] expectedHash = Convert.FromBase64String(parts[1]);
         byte[] actualHash = KeyDerivation.Pbkdf2(password, salt, KeyDerivationPrf.HMACSHA256, 100_000, 32);
         return CryptographicOperations.FixedTimeEquals(expectedHash, actualHash);
-    }
-
-    /// <summary>
-    /// Crée un nouveau compte. Retourne false si le username est déjà pris.
-    /// </summary>
-    public async Task<bool> RegisterAsync(string username, string password)
-    {
-        if (await _db.Users.AnyAsync(u => u.Username == username))
-            return false;
-
-        _db.Users.Add(new User
-        {
-            Username = username,
-            PasswordHash = HashPassword(password),
-            Role = "Member"
-        });
-        await _db.SaveChangesAsync();
-        return true;
     }
 
     /// <summary>

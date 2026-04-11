@@ -1,0 +1,56 @@
+@page "/profile"
+@model MoonlightSquad.Pages.Pages.ProfileModel
+@{
+    ViewData["Title"] = "Mon profil";
+}
+
+<div class="row justify-content-center mt-5">
+    <div class="col-md-6">
+        <div class="card shadow">
+            <div class="card-body p-4">
+                <div class="text-center mb-4">
+                    @if (!string.IsNullOrEmpty(Model.CurrentProfilePicture))
+                    {
+                        <img src="@Model.CurrentProfilePicture" class="rounded-circle mb-2"
+                             style="width:100px;height:100px;object-fit:cover;" alt="Photo de profil" />
+                    }
+                    else
+                    {
+                        <svg xmlns="http://www.w3.org/2000/svg" width="100" height="100"
+                             fill="#6c757d" viewBox="0 0 16 16" class="mb-2">
+                            <path d="M8 8a3 3 0 1 0 0-6 3 3 0 0 0 0 6zm2-3a2 2 0 1 1-4 0 2 2 0 0 1 4 0zm4 8c0 1-1 1-1 1H3s-1 0-1-1 1-4 6-4 6 3 6 4zm-1-.004c-.001-.246-.154-.986-.832-1.664C11.516 10.68 10.289 10 8 10c-2.29 0-3.516.68-4.168 1.332-.678.678-.83 1.418-.832 1.664h10z"/>
+                        </svg>
+                    }
+                    <h4 class="mb-0">@Model.Username</h4>
+                </div>
+
+                @if (TempData["Success"] != null)
+                {
+                    <div class="alert alert-success">@TempData["Success"]</div>
+                }
+
+                <div asp-validation-summary="All" class="alert alert-danger" role="alert"></div>
+
+                <form method="post" enctype="multipart/form-data">
+                    <div class="mb-3">
+                        <label asp-for="ProfilePictureFile" class="form-label">Changer la photo de profil <span class="text-muted">(max 2 Mo)</span></label>
+                        <input asp-for="ProfilePictureFile" type="file" class="form-control" accept="image/*" />
+                        <span asp-validation-for="ProfilePictureFile" class="text-danger small"></span>
+                    </div>
+                    <div class="mb-3">
+                        <label asp-for="AboutMe" class="form-label">À propos</label>
+                        <textarea asp-for="AboutMe" class="form-control" rows="4" placeholder="Parle-nous un peu de toi..."></textarea>
+                        <span asp-validation-for="AboutMe" class="text-danger small"></span>
+                    </div>
+                    <div class="d-grid">
+                        <button type="submit" class="btn btn-primary">Sauvegarder</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    @{ await Html.RenderPartialAsync("_ValidationScriptsPartial"); }
+}
