@@ -17,6 +17,9 @@ builder.Services.AddDbContext<AppDbContext>(options =>
 // Service utilisateurs
 builder.Services.AddScoped<UserService>();
 
+// Service des nouvelles
+builder.Services.AddScoped<NewsService>();
+
 // Authentification par cookie
 builder.Services.AddAuthentication(CookieAuthenticationDefaults.AuthenticationScheme)
     .AddCookie(options =>

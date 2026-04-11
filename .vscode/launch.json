@@ -9,6 +9,17 @@
             "type": "dotnet",
             "request": "launch",
             "projectPath": "${workspaceFolder}/MoonlightSquad.csproj"
+        },
+        {
+            "name": "C#: Debug + Browser",
+            "type": "dotnet",
+            "request": "launch",
+            "projectPath": "${workspaceFolder}/MoonlightSquad.csproj",
+            "serverReadyAction": {
+                "pattern": "\\bNow listening on:\\s+(https?://\\S+)",
+                "uriFormat": "%s",
+                "action": "openExternally"
+            }
         }
 
     ]
