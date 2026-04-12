@@ -19,10 +19,10 @@ namespace MoonlightSquad.Pages.Admin
         public int? EditId { get; set; }
 
         [BindProperty]
-        public string Title { get; set; }
+        public string? Title { get; set; }
 
         [BindProperty]
-        public string Content { get; set; }
+        public string? NewsContent { get; set; }
 
         [BindProperty]
         public string? ImageUrl { get; set; }
@@ -49,7 +49,7 @@ namespace MoonlightSquad.Pages.Admin
                 {
                     EditId = EditingNews.Id;
                     Title = EditingNews.Title;
-                    Content = EditingNews.Content;
+                    NewsContent = EditingNews.Content;
                     ImageUrl = EditingNews.ImageUrl;
                     IsActive = EditingNews.IsActive;
                     Order = EditingNews.Order;
@@ -60,19 +60,18 @@ namespace MoonlightSquad.Pages.Admin
 
         public async Task<IActionResult> OnPostSaveAsync()
         {
-            if (!ModelState.IsValid || string.IsNullOrEmpty(Title) || string.IsNullOrEmpty(Content))
+            if (!ModelState.IsValid || string.IsNullOrEmpty(Title) || string.IsNullOrEmpty(NewsContent))
             {
                 return RedirectToPage();
             }
 
             if (EditId.HasValue)
             {
-                // Modification
                 var news = new News
                 {
                     Id = EditId.Value,
-                    Title = Title,
-                    Content = Content,
+                    Title = Title!,
+                    Content = NewsContent!,
                     ImageUrl = ImageUrl,
                     IsActive = IsActive,
                     Order = Order
@@ -81,15 +80,15 @@ namespace MoonlightSquad.Pages.Admin
             }
             else
             {
-                // Création
+                var userId = int.Parse(User.FindFirst("UserId")!.Value);
                 var news = new News
                 {
-                    Title = Title,
-                    Content = Content,
+                    Title = Title!,
+                    Content = NewsContent!,
                     ImageUrl = ImageUrl,
                     IsActive = IsActive,
                     Order = Order,
-                    CreatedByUserId = 1 // À adapter selon l'utilisateur connecté
+                    CreatedByUserId = userId
                 };
                 await _newsService.CreateAsync(news);
             }

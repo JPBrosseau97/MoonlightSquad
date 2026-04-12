@@ -1,4 +1,5 @@
 using System.ComponentModel.DataAnnotations;
+using System.ComponentModel.DataAnnotations.Schema;
 
 namespace MoonlightSquad.Class.DAL
 {
@@ -9,10 +10,10 @@ namespace MoonlightSquad.Class.DAL
 
         [Required]
         [StringLength(200)]
-        public string Title { get; set; }
+        public required string Title { get; set; }
 
         [Required]
-        public string Content { get; set; }
+        public required string Content { get; set; }
 
         public string? ImageUrl { get; set; }
 
@@ -26,5 +27,11 @@ namespace MoonlightSquad.Class.DAL
         public bool IsActive { get; set; } = true;
 
         public int Order { get; set; } = 0;
+
+        [Required]
+        public int IdNewsCategory { get; set; }
+
+        [ForeignKey("IdNewsCategory")]
+        public NewsCategory? NewsCategory { get; set; }
     }
 }

@@ -21,8 +21,8 @@ public class UserService
         return VerifyPassword(password, user.PasswordHash) ? user : null;
     }
 
-    public async Task<User?> GetByUsernameAsync(string username)
-        => await _db.Users.FirstOrDefaultAsync(u => u.Username == username);
+    public Task<User?> GetByUsernameAsync(string username)
+        => _db.Users.FirstOrDefaultAsync(u => u.Username == username);
 
     /// <summary>
     /// Crée un nouveau compte. Retourne false si le username est déjà pris.
@@ -80,7 +80,7 @@ public class UserService
     /// </summary>
     public async Task SeedAdminAsync()
     {
-        if (!await _db.Users.AnyAsync())
+        if (!await _db.Users.AnyAsync(u => u.Username == "admin"))
         {
             _db.Users.Add(new User
             {

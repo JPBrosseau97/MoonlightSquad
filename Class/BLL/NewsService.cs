@@ -13,9 +13,9 @@ namespace MoonlightSquad.Class.BLL
         }
 
         // Récupérer toutes les nouvelles actives triées par ordre d'affichage
-        public async Task<List<News>> GetAllActiveAsync()
+        public Task<List<News>> GetAllActiveAsync()
         {
-            return await _db.News
+            return _db.News
                 .Where(n => n.IsActive)
                 .OrderBy(n => n.Order)
                 .ThenByDescending(n => n.CreatedAt)
@@ -23,18 +23,18 @@ namespace MoonlightSquad.Class.BLL
         }
 
         // Récupérer toutes les nouvelles (incluant les inactives) pour l'admin
-        public async Task<List<News>> GetAllAsync()
+        public Task<List<News>> GetAllAsync()
         {
-            return await _db.News
+            return _db.News
                 .OrderBy(n => n.Order)
                 .ThenByDescending(n => n.CreatedAt)
                 .ToListAsync();
         }
 
         // Récupérer une nouvelle par ID
-        public async Task<News?> GetByIdAsync(int id)
+        public Task<News?> GetByIdAsync(int id)
         {
-            return await _db.News.FirstOrDefaultAsync(n => n.Id == id);
+            return _db.News.FirstOrDefaultAsync(n => n.Id == id);
         }
 
         // Créer une nouvelle
@@ -76,9 +76,23 @@ namespace MoonlightSquad.Class.BLL
         }
 
         // Obtenir le nombre de nouvelles
-        public async Task<int> GetCountAsync()
+        public Task<int> GetCountAsync()
         {
-            return await _db.News.CountAsync();
+            return _db.News.CountAsync();
+        }
+
+        public Task<List<News>> GetByCategoryAsync(int categoryId)
+        {
+            return _db.News
+                .Where(n => n.IdNewsCategory == categoryId && n.IsActive)
+                .OrderBy(n => n.Order)
+                .ThenByDescending(n => n.CreatedAt)
+                .ToListAsync();
+        }
+
+        public Task<List<NewsCategory>> GetAllCategoriesAsync()
+        {
+            return _db.NewsCategories.OrderBy(c => c.CategoryName).ToListAsync();
         }
     }
 }
